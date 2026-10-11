@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quinté Expert — Tableau de bord</title>
+<style>
+:root{--green:#173f35;--gold:#e9c879;--paper:#f5f6f2;--ink:#1c2925;--muted:#65736d;--line:#dce3dc}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:var(--green);color:white;padding:24px 18px 28px}header .wrap,main{max-width:980px;margin:auto} .eyebrow{color:var(--gold);font-size:.76rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}h1{font-size:clamp(1.8rem,5vw,2.6rem);margin:5px 0}header p{margin:6px 0 0;color:#e4eee8}
+main{padding:18px;display:grid;gap:16px}.card{background:white;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 3px 12px #173f3508}.card h2{font-size:1.12rem;margin:0 0 12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:grid;gap:5px}label{font-size:.86rem;font-weight:700;color:#394a43}input,select,textarea{width:100%;font:inherit;padding:11px 12px;border:1px solid #cbd6ce;border-radius:10px;background:#fff;color:var(--ink)}textarea{min-height:75px;resize:vertical}.wide{grid-column:1/-1}.btn{border:0;border-radius:10px;background:var(--green);color:white;padding:12px 16px;font:700 1rem inherit;cursor:pointer}.btn.secondary{background:#edf2ee;color:var(--green);border:1px solid var(--line)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.picks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.pick{background:#f5f8f5;border:1px solid var(--line);border-radius:12px;padding:13px}.pick strong{display:block;font-size:1.4rem;color:var(--green)}.pick span{font-size:.8rem;color:var(--muted)}.notice{font-size:.86rem;color:var(--muted);background:#f8f7f0;padding:12px;border-radius:10px}.history-item{border-top:1px solid var(--line);padding:12px 0}.history-item:first-child{border-top:0}.history-item strong{display:block}.empty{color:var(--muted);font-size:.92rem}.footer{text-align:center;color:var(--muted);font-size:.8rem;padding:4px 18px 28px}
+@media(max-width:620px){.grid{grid-template-columns:1fr}.picks{grid-template-columns:1fr}.card{padding:15px}main{padding:12px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="eyebrow">Analyse • Stratégie • Surprises</div><h1>🏆 Quinté Expert</h1><p>Ton carnet de pronostics hippiques, simple et pratique.</p></div></header>
+<main>
+<section class="card"><h2>📅 Course du jour</h2><div class="grid">
+<div class="field"><label for="date">Date</label><input id="date" type="date"></div>
+<div class="field"><label for="course">Réunion / course / hippodrome</label><input id="course" placeholder="Ex. R1 C4 — Vincennes"></div>
+<div class="field wide"><label for="conditions">Conditions de course</label><input id="conditions" placeholder="Distance, discipline, corde, terrain…"></div>
+</div></section>
+<section class="card"><h2>🎯 Notre sélection</h2><div class="picks">
+<div class="pick"><span>BASE 1</span><strong id="base1">—</strong><input id="b1" placeholder="N° du cheval"></div>
+<div class="pick"><span>BASE 2</span><strong id="base2">—</strong><input id="b2" placeholder="N° du cheval"></div>
+<div class="pick"><span>BASE 3</span><strong id="base3">—</strong><input id="b3" placeholder="N° du cheval"></div>
+</div><div class="grid" style="margin-top:12px">
+<div class="field"><label for="outsiders">Outsiders à retenir</label><input id="outsiders" placeholder="Ex. 4, 8, 12"></div>
+<div class="field"><label for="surprise">Le cheval surprise</label><input id="surprise" placeholder="Numéro + nom si connu"></div>
+<div class="field wide"><label for="reason">Pourquoi cette sélection ?</label><textarea id="reason" placeholder="Forme récente, aptitude piste, driver/jockey, cote, engagement…"></textarea></div>
+</div><div class="actions"><button class="btn" id="save">Enregistrer le pronostic</button><button class="btn secondary" id="clear">Effacer le formulaire</button></div></section>
+<section class="card"><h2>🧾 Tickets envisagés</h2><div class="grid">
+<div class="field"><label for="quinte">Quinté+ / champ réduit</label><input id="quinte" placeholder="Ex. 3 bases + 5 associés"></div>
+<div class="field"><label for="multi">Multi / 2 sur 4</label><input id="multi" placeholder="Sélection à étudier"></div>
+<div class="field"><label for="budget">Budget maximal (€)</label><input id="budget" type="number" min="0" step="0.50" placeholder="Ex. 5"></div>
+</div><p class="notice">Les tickets sont des pistes à vérifier avant de jouer. Les pronostics restent incertains : ne mise que ce que tu peux te permettre de perdre.</p></section>
+<section class="card"><h2>📊 Historique et résultats</h2><div class="grid">
+<div class="field"><label for="arrival">Arrivée officielle (ordre)</label><input id="arrival" placeholder="Ex. 6-12-4-9-2"></div>
+<div class="field"><label for="resultnote">Bilan après course</label><input id="resultnote" placeholder="Ce qui a fonctionné / à revoir"></div>
+</div><div class="actions"><button class="btn" id="addresult">Enregistrer l'arrivée et le bilan</button><button class="btn secondary" id="export">Exporter l'historique (JSON)</button></div><div id="history" style="margin-top:12px"><p class="empty">Aucun historique pour le moment. Les données enregistrées restent dans ce navigateur.</p></div></section>
+</main><div class="footer">Prototype local • Pas de cotes ni de partants actualisés automatiquement pour le moment.</div>
+<script>
+const $=id=>document.getElementById(id);
+const ids=['date','course','conditions','b1','b2','b3','outsiders','surprise','reason','quinte','multi','budget','arrival','resultnote'];
+$('date').value=new Date().toLocaleDateString('en-CA');
+function updateBases(){['b1','b2','b3'].forEach((id,i)=>$('base'+(i+1)).textContent=$(id).value.trim()||'—')}
+['b1','b2','b3'].forEach(id=>$(id).addEventListener('input',updateBases));
+function getStore(){try{return JSON.parse(localStorage.getItem('quinteExpertHistory')||'[]')}catch(e){return []}}
+function setStore(v){localStorage.setItem('quinteExpertHistory',JSON.stringify(v))}
+function render(){let h=getStore();$('history').innerHTML=h.length?h.slice().reverse().map(x=>`<div class="history-item"><strong>${esc(x.date||'Date inconnue')} — ${esc(x.course||'Course non précisée')}</strong><div>Pronostic : bases ${esc([x.b1,x.b2,x.b3].filter(Boolean).join(', ')||'—')} · outsiders ${esc(x.outsiders||'—')} · surprise ${esc(x.surprise||'—')}</div><div>Arrivée : ${esc(x.arrival||'à renseigner')}</div><div>${esc(x.resultnote||'')}</div></div>`).join(''):'<p class="empty">Aucun historique pour le moment. Les données enregistrées restent dans ce navigateur.</p>'}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function read(){let o={};ids.forEach(id=>o[id]=$(id).value.trim());return o}
+$('save').onclick=()=>{let o=read();if(!o.course){alert('Indique au moins la réunion ou la course.');return}let h=getStore();h.push({...o,savedAt:new Date().toISOString(),type:'pronostic'});setStore(h);render();alert('Pronostic enregistré sur cet appareil.')}
+$('addresult').onclick=()=>{let o=read();if(!o.course){alert('Indique la course avant d’enregistrer le résultat.');return}let h=getStore();let idx=h.findLastIndex? h.findLastIndex(x=>x.course===o.course&&x.date===o.date&&x.type==='pronostic'):-1;if(idx>=0){h[idx]={...h[idx],arrival:o.arrival,resultnote:o.resultnote,type:'pronostic + résultat'}}else h.push({...o,savedAt:new Date().toISOString(),type:'résultat'});setStore(h);render();alert('Arrivée et bilan enregistrés.')}
+$('clear').onclick=()=>{if(confirm('Effacer les champs du formulaire ?')){ids.forEach(id=>$(id).value='');$('date').value=new Date().toLocaleDateString('en-CA');updateBases()}}
+$('export').onclick=()=>{let blob=new Blob([JSON.stringify(getStore(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='historique-quinte-expert.json';a.click();URL.revokeObjectURL(url)}
+render();
+</script></body></html>
